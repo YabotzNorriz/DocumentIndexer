@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -49,10 +52,27 @@ public class HtmlParser {
 		this.outputDATFile = outputDATFile;
 	}
 
-	public boolean parseFile(String inputHtmlFile, String outputDatFile) {
+	public boolean parseFile(String outputDatFile) {
+		String inputedFile = "";
+		JFileChooser chooser = new JFileChooser();
+		
+		//Filtro para o chooser
+		FileNameExtensionFilter filtro = new FileNameExtensionFilter("Selecione apenas HTML", "html");
+		
+		//Coloca o filtro no chooser
+		chooser.setFileFilter(filtro);
+		
+		int retorno = chooser.showOpenDialog(null);
+		
+		if (retorno == JFileChooser.APPROVE_OPTION) {
+			inputedFile = chooser.getSelectedFile().getAbsolutePath();
+		} else {
+			return false;
+		}
+        
 		try {
 	    	// O objeto File faz parte do java.io
-	        File inputFile = new File(inputHtmlFile);
+	        File inputFile = new File(inputedFile);
 	        // Transforma em UTF-8 para que seja possível a leitura de alguns caracteres da língua portuguesa
 	        Document documentoHTML = Jsoup.parse(inputFile, "UTF-8");
 
@@ -97,6 +117,7 @@ public class HtmlParser {
                         String text = document.text();
 
                         // Escreve o nome do arquivo e o conteúdo no arquivo de saída
+                        writer.newLine();
                         writer.write("[Arquivo" + i + "]:" + file.getName());
                         writer.newLine();
                         writer.write(text);
