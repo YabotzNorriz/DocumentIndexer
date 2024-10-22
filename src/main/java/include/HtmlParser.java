@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -72,7 +73,8 @@ public class HtmlParser {
 		try {
 			// O objeto File faz parte do java.io
 			File inputFile = new File(inputedFile);
-			// Transforma em UTF-8 para que seja possível a leitura de alguns caracteres da  língua portuguesa
+			// Transforma em UTF-8 para que seja possível a leitura de alguns caracteres da
+			// língua portuguesa
 			Document documentoHTML = Jsoup.parse(inputFile, "UTF-8");
 			String text = documentoHTML.text();
 
@@ -93,24 +95,21 @@ public class HtmlParser {
 	}
 
 	public boolean parseDirectory(String inputDirectory, String outputDatFile) {
-
 		File pasta = new File(inputDirectory);
-
 		if (!pasta.exists() || !pasta.isDirectory()) {
 			System.err.println("O diretório especificado não existe ou não é um diretório.");
 			return false;
 		}
 
 		File[] arquivosHtml = pasta.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
-
 		if (arquivosHtml == null || arquivosHtml.length == 0) {
 			System.out.println("Nenhum arquivo HTML encontrado no diretório.");
 			return false;
 		}
 
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputDatFile))) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputDatFile, StandardCharsets.UTF_8))) {
 			// Processa cada arquivo HTML
-			for (File file : arquivosHtml) {	
+			for (File file : arquivosHtml) {
 				if (file.isFile()) {
 					try {
 						Document document = Jsoup.parse(file, "UTF-8");
