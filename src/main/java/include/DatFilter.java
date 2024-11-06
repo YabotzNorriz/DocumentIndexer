@@ -22,15 +22,15 @@ public class DatFilter {
 
     private String datFile;
     private String palavrasChave;
-//    public static Map<Integer, Map<String, String>> mapaNomePath;
+    // public static Map<Integer, Map<String, String>> mapaNomePath;
     public static Map<String, String> mapaNomePath;
-//    public static List<Map<String, String>> listaMapas;
+    // public static List<Map<String, String>> listaMapas;
 
     public DatFilter(String datFile, String palavrasChave) {
         super();
         this.datFile = datFile;
         this.palavrasChave = palavrasChave;
-//        listaMapas = new ArrayList<>();
+        // listaMapas = new ArrayList<>();
         filtro(datFile, palavrasChave);
     }
 
@@ -53,25 +53,27 @@ public class DatFilter {
     public void setPalavrasChave(String palavrasChave) {
         this.palavrasChave = palavrasChave;
     }
-    
+
     // Map<Integer, Map<String, String>
-//    public static Map<Integer, Map<String, String>> getMapaNomePath() {
-//		return mapaNomePath;
-//	}
-//
-//	public static void setMapaNomePath(Map<Integer, Map<String, String>> mapaNomePath) {
-//		DatFilter.mapaNomePath = mapaNomePath;
-//	}
+    // public static Map<Integer, Map<String, String>> getMapaNomePath() {
+    // return mapaNomePath;
+    // }
+    //
+    // public static void setMapaNomePath(Map<Integer, Map<String, String>>
+    // mapaNomePath) {
+    // DatFilter.mapaNomePath = mapaNomePath;
+    // }
 
     // Map<String, String>
     public static Map<String, String> getMapaNomePath() {
-		return mapaNomePath;
-	}
-	public static void setMapaNomePath(Map<String, String> mapaNomePath) {
-		DatFilter.mapaNomePath = mapaNomePath;
-	}
-	
-	private boolean filtro(String datFile, String palavrasChave) {
+        return mapaNomePath;
+    }
+
+    public static void setMapaNomePath(Map<String, String> mapaNomePath) {
+        DatFilter.mapaNomePath = mapaNomePath;
+    }
+
+    private boolean filtro(String datFile, String palavrasChave) {
 
         Set<String> palavrasEncontradas = new HashSet<>();
         List<String> listaPalavras = preencherListaPalavrasChaves(palavrasChave);
@@ -81,10 +83,10 @@ public class DatFilter {
 
             String linha;
             String path = "";
-            String[] partesArquivo = {""};
-            String[] partesPath = {""};
+            String[] partesArquivo = { "" };
+            String[] partesPath = { "" };
             String nomeArquivo = "";
-//            Integer index = 0;
+            // Integer index = 0;
 
             if (listaPalavras.size() == 0 || listaPalavras == null) {
                 return false;
@@ -101,7 +103,7 @@ public class DatFilter {
                 if (linha.startsWith("[path")) {
                     partesPath = linha.split(":");
                     path = partesPath[1];
-                    System.out.println("Parte 1 path: " + partesPath[0] +  "\nParte 2 path: " + partesPath[1]);
+                    System.out.println("Parte 1 path: " + partesPath[0] + "\nParte 2 path: " + partesPath[1]);
                 }
 
                 for (String palavra : listaPalavras) {
@@ -115,35 +117,36 @@ public class DatFilter {
 
                 if (palavrasEncontradas.containsAll(listaPalavras)) {
                     mapaNomePath.put(nomeArquivo, path);
-//                    listaMapas.add(mapaNomePath);
+                    // listaMapas.add(mapaNomePath);
                     System.out.println("Encontrada");
                 } else {
                     System.err.println("Nem todas as palavras foram encontradas no arquivo.");
                 }
-                
-//                if (palavrasEncontradas.containsAll(listaPalavras)) {
-//                    subMap.put(partesArquivo[1], partesPath[1]);
-//                    mapaNomePath.put(index, subMap);
-//                    index++;
-//                    System.out.println("Encontrada");
-//                } else {
-//                    System.err.println("Nem todas as palavras foram encontradas no arquivo.");
-//                }
+
+                // if (palavrasEncontradas.containsAll(listaPalavras)) {
+                // subMap.put(partesArquivo[1], partesPath[1]);
+                // mapaNomePath.put(index, subMap);
+                // index++;
+                // System.out.println("Encontrada");
+                // } else {
+                // System.err.println("Nem todas as palavras foram encontradas no arquivo.");
+                // }
 
                 palavrasEncontradas.clear();
             }
-            
-//            for (Map.Entry<Integer, Map<String, String>> entrada : mapaNomePath.entrySet()) {
-//                System.out.println("Arquivo: " + entrada.getKey() + ", path: " +
-//                        entrada.getValue());
-//           }
-            
+
+            // for (Map.Entry<Integer, Map<String, String>> entrada :
+            // mapaNomePath.entrySet()) {
+            // System.out.println("Arquivo: " + entrada.getKey() + ", path: " +
+            // entrada.getValue());
+            // }
+
             setMapaNomePath(mapaNomePath);
-            
+
             for (Map.Entry<String, String> entrada : mapaNomePath.entrySet()) {
-            	System.out.println("Arquivo: " + entrada.getKey() + ", path: " + entrada.getValue());
+                System.out.println("Arquivo: " + entrada.getKey() + ", path: " + entrada.getValue());
             }
-            
+
             if (!palavrasEncontradas.containsAll(listaPalavras)) {
                 return false;
             }

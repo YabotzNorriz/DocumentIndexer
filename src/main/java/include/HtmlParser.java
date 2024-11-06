@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.text.Normalizer;
 import java.util.regex.Pattern;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -53,47 +50,47 @@ public class HtmlParser {
         this.outputDATFile = outputDATFile;
     }
 
-    private boolean parseFile(String outputDatFile) {
-        String inputedFile = "";
-        JFileChooser chooser = new JFileChooser();
+    // private boolean parseFile(String outputDatFile) {
+    //     String inputedFile = "";
+    //     JFileChooser chooser = new JFileChooser();
 
-        // Filtro para o chooser
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Selecione apenas HTML", "html");
+    //     // Filtro para o chooser
+    //     FileNameExtensionFilter filtro = new FileNameExtensionFilter("Selecione apenas HTML", "html");
 
-        // Coloca o filtro no chooser
-        chooser.setFileFilter(filtro);
+    //     // Coloca o filtro no chooser
+    //     chooser.setFileFilter(filtro);
 
-        int retorno = chooser.showOpenDialog(null);
+    //     int retorno = chooser.showOpenDialog(null);
 
-        if (retorno == JFileChooser.APPROVE_OPTION) {
-            inputedFile = chooser.getSelectedFile().getAbsolutePath();
-        } else {
-            return false;
-        }
+    //     if (retorno == JFileChooser.APPROVE_OPTION) {
+    //         inputedFile = chooser.getSelectedFile().getAbsolutePath();
+    //     } else {
+    //         return false;
+    //     }
 
-        try {
-            // O objeto File faz parte do java.io
-            File inputFile = new File(inputedFile);
-            // Transforma em UTF-8 para que seja possível a leitura de alguns caracteres da
-            // língua portuguesa
-            Document documentoHTML = Jsoup.parse(inputFile, "UTF-8");
-            String text = documentoHTML.text();
+    //     try {
+    //         // O objeto File faz parte do java.io
+    //         File inputFile = new File(inputedFile);
+    //         // Transforma em UTF-8 para que seja possível a leitura de alguns caracteres da
+    //         // língua portuguesa
+    //         Document documentoHTML = Jsoup.parse(inputFile, "UTF-8");
+    //         String text = documentoHTML.text();
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputDatFile))) {
-                writer.newLine();
-                writer.write("[arquivo]: " + inputFile.getName());
-                writer.write(text);
-                System.out.println("Arquivo .dat criado com sucesso!");
-            } catch (IOException e) {
-                System.err.println("Erro ao criar o arquivo .dat" + e.getMessage());
-                return false;
-            }
-        } catch (IOException f) {
-            System.err.println("Erro ao processar o arquivo: " + f.getMessage());
-            return false;
-        }
-        return true;
-    }
+    //         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputDatFile))) {
+    //             writer.newLine();
+    //             writer.write("[arquivo]: " + inputFile.getName());
+    //             writer.write(text);
+    //             System.out.println("Arquivo .dat criado com sucesso!");
+    //         } catch (IOException e) {
+    //             System.err.println("Erro ao criar o arquivo .dat" + e.getMessage());
+    //             return false;
+    //         }
+    //     } catch (IOException f) {
+    //         System.err.println("Erro ao processar o arquivo: " + f.getMessage());
+    //         return false;
+    //     }
+    //     return true;
+    // }
 
     private boolean parseDirectory(String inputDirectory, String outputDatFile) {
         File pasta = new File(inputDirectory);
