@@ -163,7 +163,7 @@ public class HtmlParser {
     // return metaInfo.toString();
     // }
 
-    public String removerAcentos(String texto) {
+    public static String removerAcentos(String texto) {
         String textoNormalizado = Normalizer.normalize(texto, Normalizer.Form.NFD);
         Pattern padrao = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return padrao.matcher(textoNormalizado).replaceAll("").replaceAll("[^a-zA-Z0-9\\s]", "");

@@ -5,9 +5,12 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Desktop;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import include.DatFilter;
 import include.HtmlParser;
@@ -19,10 +22,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InaccessibleObjectException;
+import java.util.Map;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class FormPesquisa {
 
@@ -30,6 +37,10 @@ public class FormPesquisa {
     private JTextField txtBusca;
     private String pathInputDirectory;
     private String pathOutputFile;
+    private DefaultListModel<String> listModel;
+    private JList<String> listEncontrados;
+    
+    private Map<String, File> fileMapa;
 
     public String getPathInputDirectory() {
         return pathInputDirectory;
@@ -49,7 +60,15 @@ public class FormPesquisa {
         this.pathOutputFile = pathOutputFile;
     }
 
-    /**
+    public Map<String, File> getFileMapa() {
+		return fileMapa;
+	}
+
+	public void setFileMapa(Map<String, File> fileMapa) {
+		this.fileMapa = fileMapa;
+	}
+
+	/**
      * Launch the application.
      */
     public static void main(String[] args) {
@@ -75,7 +94,6 @@ public class FormPesquisa {
     /**
      * Initialize the contents of the frame.
      */
-    @SuppressWarnings("rawtypes")
     private void initialize() {
         frame = new JFrame();
         frame.setBounds(100, 100, 450, 300);
@@ -99,8 +117,10 @@ public class FormPesquisa {
                 try {
                     new HtmlParser(getPathInputDirectory(), getPathOutputFile());
                     try {
-                        String palavrasChave = txtBusca.getText();
-                        new DatFilter(getPathOutputFile(), palavrasChave);
+                        String palavrasChave = HtmlParser.removerAcentos(txtBusca.getText());
+                        DatFilter df = new DatFilter(getPathOutputFile(), palavrasChave);
+                        setFileMapa(df.getMapaNomePath());
+                        addItemLista(getFileMapa());
                     } catch (InaccessibleObjectException f) {
                         JOptionPane.showMessageDialog(null, "ERRO! " + f.getMessage());
                     }
@@ -119,11 +139,13 @@ public class FormPesquisa {
         JMenu mnArquivo = new JMenu("Arquivo");
         menuBar.add(mnArquivo);
 
-        JMenuItem mntmDiretorio = new JMenuItem("Diretório");
+        JMenuItem mntmDiretorio = new JMenuItem("Diretório Entrada");
         mntmDiretorio.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                FileNameExtensionFilter filtro = new FileNameExtensionFilter("Selecione apenas um diretório", "html");
+                chooser.setFileFilter(filtro);
                 int res = chooser.showOpenDialog(null);
                 if (res == JFileChooser.APPROVE_OPTION) {
                     File diretorio = chooser.getSelectedFile();
@@ -136,11 +158,13 @@ public class FormPesquisa {
         });
         mnArquivo.add(mntmDiretorio);
 
-        JMenuItem mntmSaida = new JMenuItem("Saída");
+        JMenuItem mntmSaida = new JMenuItem("Diretório Saída");
         mntmSaida.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                FileNameExtensionFilter filtro = new FileNameExtensionFilter("Selecione apenas diretórios", "dat");
+                chooser.setFileFilter(filtro);
                 int res = chooser.showOpenDialog(null);
                 if (res == JFileChooser.APPROVE_OPTION) {
                     File diretorio = chooser.getSelectedFile();
@@ -164,12 +188,37 @@ public class FormPesquisa {
         });
         mnArquivo.add(mntmSair);
 
-        JScrollPane painelScroll = new JScrollPane();
-        painelScroll.setBounds(12, 68, 426, 195);
-        panelSus.add(painelScroll);
+        JScrollPane panelScroll = new JScrollPane();
+        panelScroll.setBounds(12, 68, 426, 195);
+        panelSus.add(panelScroll);
 
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        JList listEncontrados = new JList<>(listModel);
-        painelScroll.setViewportView(listEncontrados);
+        listModel = new DefaultListModel<>();
+        listEncontrados = new JList<>(listModel);
+        listEncontrados.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent e) {
+        		if (e.getClickCount() == 2) {
+        			String itemSelecionado = listEncontrados.getSelectedValue();
+        			File file = getFileMapa().get(itemSelecionado);
+        			if (file != null && file.exists()) {
+        				try {
+        					Desktop.getDesktop().open(file);
+        				} catch (IOException f){
+        					JOptionPane.showMessageDialog(null, "Erro ao abrir o arquivo: " + f.getMessage());
+        				}
+        			} else {
+        				JOptionPane.showMessageDialog(null, "Arquivo não encontrado!");
+        			}
+        		}
+        	}
+        });
+        panelScroll.setViewportView(listEncontrados);
+    }
+    
+    public void addItemLista(Map<String, File> mapStrFile) {
+    	listModel.clear();
+    	for (Map.Entry<String, File> entrada : mapStrFile.entrySet()) {
+            listModel.addElement(entrada.getKey());
+        }
     }
 }

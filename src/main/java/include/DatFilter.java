@@ -1,6 +1,7 @@
 package include;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ public class DatFilter {
     private String datFile;
     private String palavrasChave;
     // public static Map<Integer, Map<String, String>> mapaNomePath;
-    public static Map<String, String> mapaNomePath;
+    // Map<Arquivo, Path>
+    private Map<String, File> mapaNomePath;
     // public static List<Map<String, String>> listaMapas;
 
     public DatFilter(String datFile, String palavrasChave) {
@@ -65,24 +67,24 @@ public class DatFilter {
     // }
 
     // Map<String, String>
-    public static Map<String, String> getMapaNomePath() {
+    public Map<String, File> getMapaNomePath() {
         return mapaNomePath;
     }
 
-    public static void setMapaNomePath(Map<String, String> mapaNomePath) {
-        DatFilter.mapaNomePath = mapaNomePath;
+    public void setMapaNomePath(Map<String, File> mapaNomePath) {
+        this.mapaNomePath = mapaNomePath;
     }
 
     private boolean filtro(String datFile, String palavrasChave) {
 
         Set<String> palavrasEncontradas = new HashSet<>();
         List<String> listaPalavras = preencherListaPalavrasChaves(palavrasChave);
-        Map<String, String> mapaNomePath = new HashMap<>();
+        Map<String, File> mapaNomePath = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(datFile))) {
 
             String linha;
-            String path = "";
+            File path = new File("");
             String[] partesArquivo = { "" };
             String[] partesPath = { "" };
             String nomeArquivo = "";
@@ -93,20 +95,23 @@ public class DatFilter {
             }
             // Percorre o arquivo linha por linha
             while ((linha = reader.readLine()) != null) {
-
+            	
+            	//Pega o nome do arquivo
                 if (linha.startsWith("[arquivo")) {
                     partesArquivo = linha.split(":");
                     nomeArquivo = partesArquivo[1];
                     System.out.println("Parte 1 nome: " + partesArquivo[0] + "\nParte 2 nome: " + partesArquivo[1]);
                 }
 
+                //Pega o caminho do arquivo
                 if (linha.startsWith("[path")) {
                     partesPath = linha.split(":");
-                    path = partesPath[1];
+                    path = new File(partesPath[1]);
                     System.out.println("Parte 1 path: " + partesPath[0] + "\nParte 2 path: " + partesPath[1]);
                 }
 
                 for (String palavra : listaPalavras) {
+                	//Cria um padrão para o REGEX com as palavra colocadas
                     Pattern padrao = Pattern.compile("\\b" + Pattern.quote(palavra) + "\\b");
                     Matcher matcher = padrao.matcher(linha);
 
@@ -114,7 +119,8 @@ public class DatFilter {
                         palavrasEncontradas.add(matcher.group());
                     }
                 }
-
+                
+                // Preenche um mapa com os arquivos que tem todas as palavras chaves
                 if (palavrasEncontradas.containsAll(listaPalavras)) {
                     mapaNomePath.put(nomeArquivo, path);
                     // listaMapas.add(mapaNomePath);
@@ -141,9 +147,10 @@ public class DatFilter {
             // entrada.getValue());
             // }
 
+            //O loop acaba e o atributo da classe é setado
             setMapaNomePath(mapaNomePath);
 
-            for (Map.Entry<String, String> entrada : mapaNomePath.entrySet()) {
+            for (Map.Entry<String, File> entrada : mapaNomePath.entrySet()) {
                 System.out.println("Arquivo: " + entrada.getKey() + ", path: " + entrada.getValue());
             }
 
