@@ -8,7 +8,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DatFilter {
 
@@ -19,11 +22,15 @@ public class DatFilter {
 
     private String datFile;
     private String palavrasChave;
+//    public static Map<Integer, Map<String, String>> mapaNomePath;
+    public static Map<String, String> mapaNomePath;
+//    public static List<Map<String, String>> listaMapas;
 
     public DatFilter(String datFile, String palavrasChave) {
         super();
         this.datFile = datFile;
         this.palavrasChave = palavrasChave;
+//        listaMapas = new ArrayList<>();
         filtro(datFile, palavrasChave);
     }
 
@@ -46,16 +53,38 @@ public class DatFilter {
     public void setPalavrasChave(String palavrasChave) {
         this.palavrasChave = palavrasChave;
     }
+    
+    // Map<Integer, Map<String, String>
+//    public static Map<Integer, Map<String, String>> getMapaNomePath() {
+//		return mapaNomePath;
+//	}
+//
+//	public static void setMapaNomePath(Map<Integer, Map<String, String>> mapaNomePath) {
+//		DatFilter.mapaNomePath = mapaNomePath;
+//	}
 
-    private boolean filtro(String datFile, String palavrasChave) {
+    // Map<String, String>
+    public static Map<String, String> getMapaNomePath() {
+		return mapaNomePath;
+	}
+	public static void setMapaNomePath(Map<String, String> mapaNomePath) {
+		DatFilter.mapaNomePath = mapaNomePath;
+	}
+	
+	private boolean filtro(String datFile, String palavrasChave) {
 
         Set<String> palavrasEncontradas = new HashSet<>();
-        List<String> listaPalavras = preencherListaPalavrasChave(palavrasChave);
-        List<String> listaLinhasCompletas = new ArrayList<>();
+        List<String> listaPalavras = preencherListaPalavrasChaves(palavrasChave);
+        Map<String, String> mapaNomePath = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(datFile))) {
 
             String linha;
+            String path = "";
+            String[] partesArquivo = {""};
+            String[] partesPath = {""};
+            String nomeArquivo = "";
+//            Integer index = 0;
 
             if (listaPalavras.size() == 0 || listaPalavras == null) {
                 return false;
@@ -63,22 +92,58 @@ public class DatFilter {
             // Percorre o arquivo linha por linha
             while ((linha = reader.readLine()) != null) {
 
+                if (linha.startsWith("[arquivo")) {
+                    partesArquivo = linha.split(":");
+                    nomeArquivo = partesArquivo[1];
+                    System.out.println("Parte 1 nome: " + partesArquivo[0] + "\nParte 2 nome: " + partesArquivo[1]);
+                }
+
+                if (linha.startsWith("[path")) {
+                    partesPath = linha.split(":");
+                    path = partesPath[1];
+                    System.out.println("Parte 1 path: " + partesPath[0] +  "\nParte 2 path: " + partesPath[1]);
+                }
+
                 for (String palavra : listaPalavras) {
-                    if (linha.toLowerCase().contains(palavra)) {
-                        palavrasEncontradas.add(palavra);
+                    Pattern padrao = Pattern.compile("\\b" + Pattern.quote(palavra) + "\\b");
+                    Matcher matcher = padrao.matcher(linha);
+
+                    while (matcher.find()) {
+                        palavrasEncontradas.add(matcher.group());
                     }
                 }
 
                 if (palavrasEncontradas.containsAll(listaPalavras)) {
-                    listaLinhasCompletas.add(linha);
-                    System.out.println(linha);
+                    mapaNomePath.put(nomeArquivo, path);
+//                    listaMapas.add(mapaNomePath);
+                    System.out.println("Encontrada");
                 } else {
-                    System.out.println("Nem todas as palavras foram encontradas no arquivo.");
+                    System.err.println("Nem todas as palavras foram encontradas no arquivo.");
                 }
+                
+//                if (palavrasEncontradas.containsAll(listaPalavras)) {
+//                    subMap.put(partesArquivo[1], partesPath[1]);
+//                    mapaNomePath.put(index, subMap);
+//                    index++;
+//                    System.out.println("Encontrada");
+//                } else {
+//                    System.err.println("Nem todas as palavras foram encontradas no arquivo.");
+//                }
 
                 palavrasEncontradas.clear();
             }
-
+            
+//            for (Map.Entry<Integer, Map<String, String>> entrada : mapaNomePath.entrySet()) {
+//                System.out.println("Arquivo: " + entrada.getKey() + ", path: " +
+//                        entrada.getValue());
+//           }
+            
+            setMapaNomePath(mapaNomePath);
+            
+            for (Map.Entry<String, String> entrada : mapaNomePath.entrySet()) {
+            	System.out.println("Arquivo: " + entrada.getKey() + ", path: " + entrada.getValue());
+            }
+            
             if (!palavrasEncontradas.containsAll(listaPalavras)) {
                 return false;
             }
@@ -90,18 +155,22 @@ public class DatFilter {
         return true;
     }
 
-    private List<String> preencherListaPalavrasChave(String palavrasChaves) {
+    private List<String> preencherListaPalavrasChaves(String palavrasChaves) {
         String[] palavrasBusca = palavrasChaves.trim().toLowerCase().split(",");
-        List<String> listaPalavras = Arrays.asList(palavrasBusca);
-        String palavra = "";
+        List<String> listaPalavras = new ArrayList<>();
 
-        for (int i = 0; i < listaPalavras.size(); i++) {
-            if (PALAVRAS_IGNORADAS.contains(listaPalavras.get(i))) {
-                palavra = listaPalavras.get(i);
-                System.out.println("Palavra removida: " + palavra);
-                listaPalavras.remove(i);
+        for (String palavraChave : palavrasBusca) {
+            palavraChave = palavraChave.strip().trim().toLowerCase();
+            if (!PALAVRAS_IGNORADAS.contains(palavraChave)) {
+                listaPalavras.add(palavraChave);
+                System.out.println("Palavra: " + palavraChave + " adicionada");
+            } else {
+                System.err.println("Palavra: " + palavraChave + " não adicionada");
             }
-            System.out.println(listaPalavras.get(i));
+        }
+
+        if (listaPalavras.isEmpty()) {
+            return Arrays.asList("");
         }
 
         return listaPalavras;
