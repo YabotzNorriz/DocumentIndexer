@@ -82,6 +82,7 @@ public class FormPesquisa {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
+        frame.setTitle("Indexador de Arquivos HTML");
 
         JPanel panelSus = new JPanel();
         frame.getContentPane().add(panelSus, BorderLayout.CENTER);
