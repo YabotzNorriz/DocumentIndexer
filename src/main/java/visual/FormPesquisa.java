@@ -118,7 +118,6 @@ public class FormPesquisa {
                     new HtmlParser(getPathInputDirectory(), getPathOutputFile());
                     try {
                         String palavrasChave = txtBusca.getText();
-                        
                         DatFilter df = new DatFilter(getPathOutputFile(), palavrasChave);
                         setFileMapa(df.getMapaNomePath());
                         addItemLista(getFileMapa());
@@ -203,6 +202,7 @@ public class FormPesquisa {
                     File file = getFileMapa().get(itemSelecionado);
                     if (file != null && file.exists()) {
                         try {
+                            // Abre o HTML no aplicativo padrão para HTML (provavelmente o navegador)
                             Desktop.getDesktop().open(file);
                         } catch (IOException f) {
                             JOptionPane.showMessageDialog(null, "Erro ao abrir o arquivo: " + f.getMessage());
