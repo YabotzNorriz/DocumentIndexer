@@ -39,7 +39,7 @@ public class FormPesquisa {
     private String pathOutputFile;
     private DefaultListModel<String> listModel;
     private JList<String> listEncontrados;
-    
+
     private Map<String, File> fileMapa;
 
     public String getPathInputDirectory() {
@@ -61,14 +61,14 @@ public class FormPesquisa {
     }
 
     public Map<String, File> getFileMapa() {
-		return fileMapa;
-	}
+        return fileMapa;
+    }
 
-	public void setFileMapa(Map<String, File> fileMapa) {
-		this.fileMapa = fileMapa;
-	}
+    public void setFileMapa(Map<String, File> fileMapa) {
+        this.fileMapa = fileMapa;
+    }
 
-	/**
+    /**
      * Launch the application.
      */
     public static void main(String[] args) {
@@ -117,7 +117,8 @@ public class FormPesquisa {
                 try {
                     new HtmlParser(getPathInputDirectory(), getPathOutputFile());
                     try {
-                        String palavrasChave = HtmlParser.removerAcentos(txtBusca.getText());
+                        String palavrasChave = txtBusca.getText();
+                        
                         DatFilter df = new DatFilter(getPathOutputFile(), palavrasChave);
                         setFileMapa(df.getMapaNomePath());
                         addItemLista(getFileMapa());
@@ -195,29 +196,29 @@ public class FormPesquisa {
         listModel = new DefaultListModel<>();
         listEncontrados = new JList<>(listModel);
         listEncontrados.addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mouseClicked(MouseEvent e) {
-        		if (e.getClickCount() == 2) {
-        			String itemSelecionado = listEncontrados.getSelectedValue();
-        			File file = getFileMapa().get(itemSelecionado);
-        			if (file != null && file.exists()) {
-        				try {
-        					Desktop.getDesktop().open(file);
-        				} catch (IOException f){
-        					JOptionPane.showMessageDialog(null, "Erro ao abrir o arquivo: " + f.getMessage());
-        				}
-        			} else {
-        				JOptionPane.showMessageDialog(null, "Arquivo não encontrado!");
-        			}
-        		}
-        	}
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    String itemSelecionado = listEncontrados.getSelectedValue();
+                    File file = getFileMapa().get(itemSelecionado);
+                    if (file != null && file.exists()) {
+                        try {
+                            Desktop.getDesktop().open(file);
+                        } catch (IOException f) {
+                            JOptionPane.showMessageDialog(null, "Erro ao abrir o arquivo: " + f.getMessage());
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Arquivo não encontrado!");
+                    }
+                }
+            }
         });
         panelScroll.setViewportView(listEncontrados);
     }
-    
+
     public void addItemLista(Map<String, File> mapStrFile) {
-    	listModel.clear();
-    	for (Map.Entry<String, File> entrada : mapStrFile.entrySet()) {
+        listModel.clear();
+        for (Map.Entry<String, File> entrada : mapStrFile.entrySet()) {
             listModel.addElement(entrada.getKey());
         }
     }

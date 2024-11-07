@@ -95,15 +95,15 @@ public class DatFilter {
             }
             // Percorre o arquivo linha por linha
             while ((linha = reader.readLine()) != null) {
-            	
-            	//Pega o nome do arquivo
+
+                // Pega o nome do arquivo
                 if (linha.startsWith("[arquivo")) {
                     partesArquivo = linha.split(":");
                     nomeArquivo = partesArquivo[1];
                     System.out.println("Parte 1 nome: " + partesArquivo[0] + "\nParte 2 nome: " + partesArquivo[1]);
                 }
 
-                //Pega o caminho do arquivo
+                // Pega o caminho do arquivo
                 if (linha.startsWith("[path")) {
                     partesPath = linha.split(":");
                     path = new File(partesPath[1]);
@@ -111,7 +111,7 @@ public class DatFilter {
                 }
 
                 for (String palavra : listaPalavras) {
-                	//Cria um padrão para o REGEX com as palavra colocadas
+                    // Cria um padrão para o REGEX com as palavra colocadas
                     Pattern padrao = Pattern.compile("\\b" + Pattern.quote(palavra) + "\\b");
                     Matcher matcher = padrao.matcher(linha);
 
@@ -119,7 +119,7 @@ public class DatFilter {
                         palavrasEncontradas.add(matcher.group());
                     }
                 }
-                
+
                 // Preenche um mapa com os arquivos que tem todas as palavras chaves
                 if (palavrasEncontradas.containsAll(listaPalavras)) {
                     mapaNomePath.put(nomeArquivo, path);
@@ -147,7 +147,7 @@ public class DatFilter {
             // entrada.getValue());
             // }
 
-            //O loop acaba e o atributo da classe é setado
+            // O loop acaba e o atributo da classe é setado
             setMapaNomePath(mapaNomePath);
 
             for (Map.Entry<String, File> entrada : mapaNomePath.entrySet()) {
@@ -170,7 +170,7 @@ public class DatFilter {
         List<String> listaPalavras = new ArrayList<>();
 
         for (String palavraChave : palavrasBusca) {
-            palavraChave = palavraChave.strip().trim().toLowerCase();
+            palavraChave = HtmlParser.removerAcentos(palavraChave);
             if (!PALAVRAS_IGNORADAS.contains(palavraChave)) {
                 listaPalavras.add(palavraChave);
                 System.out.println("Palavra: " + palavraChave + " adicionada");
