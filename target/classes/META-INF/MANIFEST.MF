@@ -1,4 +1,7 @@
 Manifest-Version: 1.0
-Build-Jdk-Spec: 21
+Built-By: joaopedropaes
+Build-Jdk: 21.0.5
+Class-Path: lib/jsoup-1.14.3.jar
+Main-Class: app.App
 Created-By: Maven Integration for Eclipse
 
