@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InaccessibleObjectException;
 import java.util.Map;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -121,7 +120,7 @@ public class FormPesquisa {
                         DatFilter df = new DatFilter(getPathOutputFile(), palavrasChave);
                         setFileMapa(df.getMapaNomePath());
                         addItemLista(getFileMapa());
-                    } catch (InaccessibleObjectException f) {
+                    } catch (Exception f) {
                         JOptionPane.showMessageDialog(null, "ERRO! " + f.getMessage());
                     }
                 } catch (Exception g) {
@@ -129,7 +128,7 @@ public class FormPesquisa {
                 }
             }
         });
-        btnBuscar.setBounds(337, 33, 101, 23);
+        btnBuscar.setBounds(337, 33, 87, 23);
         panelSus.add(btnBuscar);
 
         JMenuBar menuBar = new JMenuBar();
@@ -189,7 +188,7 @@ public class FormPesquisa {
         mnArquivo.add(mntmSair);
 
         JScrollPane panelScroll = new JScrollPane();
-        panelScroll.setBounds(12, 68, 426, 195);
+        panelScroll.setBounds(12, 68, 412, 182);
         panelSus.add(panelScroll);
 
         listModel = new DefaultListModel<>();
