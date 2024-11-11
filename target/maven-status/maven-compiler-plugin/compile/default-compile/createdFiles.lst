@@ -1,10 +1,14 @@
-include\HtmlParser.class
 app\App.class
+visual\FormPesquisa$7.class
+visual\FormPesquisa.class
+visual\FormPesquisa$1.class
+include\HtmlParser.class
 include\DatFilter.class
 visual\FormPesquisa$4.class
 visual\FormPesquisa$5.class
-visual\FormPesquisa.class
-visual\FormPesquisa$1.class
+visual\FormAjuda$1.class
 visual\FormPesquisa$6.class
 visual\FormPesquisa$3.class
 visual\FormPesquisa$2.class
+visual\FormAjuda$2.class
+visual\FormAjuda.class

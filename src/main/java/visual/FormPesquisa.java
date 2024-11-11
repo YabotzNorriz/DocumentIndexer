@@ -133,7 +133,7 @@ public class FormPesquisa {
                     setFileMapa(df.getMapaNomePath());
                     addItemLista(getFileMapa());
                 } catch (Exception f) {
-                	if (getFileMapa() == null) {
+                	if (getFileMapa() != null) {
                 		JOptionPane.showMessageDialog(null, "ERRO! " + f.getMessage());
                 	} else {
                 		JOptionPane.showMessageDialog(null, "Termo não encontrado na pesquisa");	
@@ -183,6 +183,7 @@ public class FormPesquisa {
                 if (res == JFileChooser.APPROVE_OPTION) {
                     File file = chooser.getSelectedFile();
                     setPathOutputFile(file.toString());
+                    setArquivoValido(false);
                     JOptionPane.showMessageDialog(null, "A saída de dados será no seguinte caminho: " + file.getAbsolutePath());
                 } else {
                     JOptionPane.showMessageDialog(null, "Você não escolheu nenhum diretório!");
