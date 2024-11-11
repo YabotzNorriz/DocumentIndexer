@@ -98,14 +98,14 @@ public class DatFilter {
 
                 // Pega o nome do arquivo
                 if (linha.startsWith("[arquivo")) {
-                    partesArquivo = linha.split(":");
+                    partesArquivo = linha.split("->");
                     nomeArquivo = partesArquivo[1];
                     System.out.println("Parte 1 nome: " + partesArquivo[0] + "\nParte 2 nome: " + partesArquivo[1]);
                 }
 
                 // Pega o caminho do arquivo
                 if (linha.startsWith("[path")) {
-                    partesPath = linha.split(":");
+                    partesPath = linha.split("->");
                     path = new File(partesPath[1]);
                     System.out.println("Parte 1 path: " + partesPath[0] + "\nParte 2 path: " + partesPath[1]);
                 }

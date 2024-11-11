@@ -116,9 +116,9 @@ public class HtmlParser {
                         String textoPuro = removerAcentos(text).toLowerCase();
                         // Escreve o nome do arquivo e o conteúdo no arquivo de saída
                         writer.newLine();
-                        writer.write("[path" + fileIndex + "]:" + file.getPath());
+                        writer.write("[path" + fileIndex + "]->" + file.getPath());
                         writer.newLine();
-                        writer.write("[arquivo" + fileIndex + "]:" + file.getName());
+                        writer.write("[arquivo" + fileIndex + "]->" + file.getName());
                         writer.newLine();
                         writer.write(textoPuro);
                         fileIndex++;
