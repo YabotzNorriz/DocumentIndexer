@@ -124,9 +124,9 @@ public class DatFilter {
                 if (palavrasEncontradas.containsAll(listaPalavras)) {
                     mapaNomePath.put(nomeArquivo, path);
                     // listaMapas.add(mapaNomePath);
-                    System.out.println("Encontrada");
+//                    System.out.println("Encontrada");
                 } else {
-                    System.err.println("Nem todas as palavras foram encontradas no arquivo.");
+//                    System.err.println("Nem todas as palavras foram encontradas no arquivo.");
                 }
 
                 // if (palavrasEncontradas.containsAll(listaPalavras)) {
@@ -148,11 +148,11 @@ public class DatFilter {
             // }
 
             // O loop acaba e o atributo da classe é setado
-            setMapaNomePath(mapaNomePath);
-
-            for (Map.Entry<String, File> entrada : mapaNomePath.entrySet()) {
-                System.out.println("Arquivo: " + entrada.getKey() + ", path: " + entrada.getValue());
+            if (mapaNomePath.isEmpty()) {
+            	return false;
             }
+            
+            setMapaNomePath(mapaNomePath);
 
             if (!palavrasEncontradas.containsAll(listaPalavras)) {
                 return false;

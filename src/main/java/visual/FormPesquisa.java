@@ -36,6 +36,7 @@ public class FormPesquisa {
     private JTextField txtBusca;
     private String pathInputDirectory;
     private String pathOutputFile;
+    private boolean arquivoValido = false;
     private DefaultListModel<String> listModel;
     private JList<String> listEncontrados;
 
@@ -67,7 +68,15 @@ public class FormPesquisa {
         this.fileMapa = fileMapa;
     }
 
-    /**
+    public boolean isArquivoValido() {
+		return arquivoValido;
+	}
+
+	public void setArquivoValido(boolean arquivoValido) {
+		this.arquivoValido = arquivoValido;
+	}
+
+	/**
      * Launch the application.
      */
     public static void main(String[] args) {
@@ -113,19 +122,23 @@ public class FormPesquisa {
         JButton btnBuscar = new JButton("Buscar");
         btnBuscar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	if (isArquivoValido()) {
+            		new HtmlParser(getPathInputDirectory(), getPathOutputFile());
+            		JOptionPane.showMessageDialog(null, "Caminho para saida.dat " + getPathOutputFile());
+            	}
+            	
                 try {
-                    new HtmlParser(getPathInputDirectory(), getPathOutputFile());
-                    try {
-                        String palavrasChave = txtBusca.getText();
-                        DatFilter df = new DatFilter(getPathOutputFile(), palavrasChave);
-                        setFileMapa(df.getMapaNomePath());
-                        addItemLista(getFileMapa());
-                    } catch (Exception f) {
-                        JOptionPane.showMessageDialog(null, "ERRO! " + f.getMessage());
-                    }
-                } catch (Exception g) {
-                    JOptionPane.showMessageDialog(null, "Diretório de entrada ou saída inválido!");
-                }
+                    String palavrasChave = txtBusca.getText();
+                    DatFilter df = new DatFilter(getPathOutputFile(), palavrasChave);
+                    setFileMapa(df.getMapaNomePath());
+                    addItemLista(getFileMapa());
+                } catch (Exception f) {
+                	if (getFileMapa() == null) {
+                		JOptionPane.showMessageDialog(null, "ERRO! " + f.getMessage());
+                	} else {
+                		JOptionPane.showMessageDialog(null, "Termo não encontrado na pesquisa");	
+                	}
+                }   
             }
         });
         btnBuscar.setBounds(337, 33, 87, 23);
@@ -138,7 +151,7 @@ public class FormPesquisa {
         JMenu mnArquivo = new JMenu("Arquivo");
         menuBar.add(mnArquivo);
 
-        JMenuItem mntmDiretorio = new JMenuItem("Diretório Entrada");
+        JMenuItem mntmDiretorio = new JMenuItem("Selecionar Pasta com HTML");
         mntmDiretorio.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
@@ -149,6 +162,8 @@ public class FormPesquisa {
                 if (res == JFileChooser.APPROVE_OPTION) {
                     File diretorio = chooser.getSelectedFile();
                     setPathInputDirectory(diretorio.getAbsolutePath());
+                    setPathOutputFile(getPathInputDirectory() + "/saida.dat");
+                    setArquivoValido(true);
                     JOptionPane.showMessageDialog(null, "Você escolheu o diretório: " + diretorio.getAbsolutePath());
                 } else {
                     JOptionPane.showMessageDialog(null, "Você não escolheu nenhum diretório!");
@@ -157,20 +172,18 @@ public class FormPesquisa {
         });
         mnArquivo.add(mntmDiretorio);
 
-        JMenuItem mntmSaida = new JMenuItem("Diretório Saída");
+        JMenuItem mntmSaida = new JMenuItem("Carregar Arquivo DAT");
         mntmSaida.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
-                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                FileNameExtensionFilter filtro = new FileNameExtensionFilter("Selecione apenas diretórios", "dat");
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                FileNameExtensionFilter filtro = new FileNameExtensionFilter("Selecione apenas um arquivo .dat", "dat");
                 chooser.setFileFilter(filtro);
                 int res = chooser.showOpenDialog(null);
                 if (res == JFileChooser.APPROVE_OPTION) {
-                    File diretorio = chooser.getSelectedFile();
-
-                    setPathOutputFile(diretorio.getAbsolutePath() + "/saida.dat");
-                    JOptionPane.showMessageDialog(null,
-                            "A saída de dados será no seguinte caminho: " + diretorio.getAbsolutePath() + "/saida.dat");
+                    File file = chooser.getSelectedFile();
+                    setPathOutputFile(file.toString());
+                    JOptionPane.showMessageDialog(null, "A saída de dados será no seguinte caminho: " + file.getAbsolutePath());
                 } else {
                     JOptionPane.showMessageDialog(null, "Você não escolheu nenhum diretório!");
                 }
@@ -186,6 +199,20 @@ public class FormPesquisa {
             }
         });
         mnArquivo.add(mntmSair);
+        
+        JMenu mnAjuda = new JMenu("Ajuda");
+        menuBar.add(mnAjuda);
+        
+        JMenuItem mntmTutorial = new JMenuItem("Tutorial");
+        mnAjuda.add(mntmTutorial);
+        
+        JMenuItem mntmSobre = new JMenuItem("Sobre");
+        mntmSobre.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		FormAjuda.main(null);
+        	}
+        });
+        mnAjuda.add(mntmSobre);
 
         JScrollPane panelScroll = new JScrollPane();
         panelScroll.setBounds(12, 68, 412, 182);
